@@ -107,12 +107,8 @@ export default function Index() {
         setResultList(list)
         return
       }
-      let temp = JSON.parse(JSON.stringify(list))
-      temp.sort(() => Math.random() - Math.random())
-      console.log('list', list)
-      console.log('temp', temp)
+      const temp = shuffle(list)
       count.current++
-      console.log('count.current', count.current)
       if (count.current > 200) return
       if (flag) {
         if (temp.some((item, index) => item.name === list[index].name || item.role === list[index].role)) {
@@ -164,14 +160,27 @@ export default function Index() {
     setForm({ name: '', role: '' })
   }, [])
 
+  const shuffle = (_list) => {
+    const arr = [...list]
+    let temp = []
+    for (let i = arr.length; i > 0; i--) {
+      let temRandom = Math.floor(Math.random() * i)
+      temp.push(arr[temRandom])
+      arr.splice(temRandom, 1) //抽取一张后，要除去这张牌，然后在剩下的牌中继续抽
+    }
+    return temp
+  }
+
   return (
     <View className="page">
       <AtMessage />
-      <View className="AtFab-wrap">
-        <AtFab onClick={handleShow}>
-          <Text className="at-fab__icon at-icon">快</Text>
-        </AtFab>
-      </View>
+      {status === 'add' && (
+        <View className="AtFab-wrap">
+          <AtFab onClick={handleShow}>
+            <Text className="at-fab__icon at-icon">快</Text>
+          </AtFab>
+        </View>
+      )}
       <AtDrawer width="80%" show={visible2} right mask onClose={handleClose2}>
         <View className="drawer-content">
           <View className="form">
